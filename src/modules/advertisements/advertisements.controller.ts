@@ -73,7 +73,7 @@ export class AdvertisementsController {
     return advertisement;
   }
 
-  @Delete(':id')
+  @Post(':id/delete')
   async remove(@Param('id') id: string) {
     const advertisement = await this.advertisementsRepository.findOneOrFail({
       where: {
