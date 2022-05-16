@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { databaseConfig } from './common/database/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { AdvertisementsModule } from './modules/advertisements/advertisements.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { UsersModule } from './modules/users/users.module';
     TypeOrmModule.forRoot(databaseConfig()),
     AuthModule,
     UsersModule,
+    AdvertisementsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

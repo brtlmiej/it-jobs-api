@@ -2,17 +2,23 @@ import { FindManyOptions, Repository } from 'typeorm';
 import { Paginator } from './paginator';
 
 export class BaseRepository<T> extends Repository<T>{
-  async findAll (take: number = 10, skip: number= 0, options: FindManyOptions = {}): Promise<Paginator<T>> {
-    options.take = take;
-    options.skip = skip;
+  async findAll (
+      records: number = 10,
+      page: number= 0,
+      orderBy: string,
+      orderDirection: 'ASC' | 'DESC',
+      options: FindManyOptions<T> = {}
+    ): Promise<Paginator<T>> {
+    options.take = records;
+    options.skip = page - 1;
     const [result, total] = await this.findAndCount(options);
 
     return {
       data: result,
-      page: skip + 1,
-      count: take,
+      page: page,
+      records: records,
       total: total,
-      totalPages: Math.ceil(total / take)
+      totalPages: Math.ceil(total / records)
     }
   }
 }
