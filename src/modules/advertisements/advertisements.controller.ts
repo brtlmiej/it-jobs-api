@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { AdvertisementsService } from './advertisements.service';
 import { CreateAdvertisementDto } from './dto/create-advertisement.dto';
 import { UpdateAdvertisementDto } from './dto/update-advertisement.dto';
@@ -7,6 +7,8 @@ import { ListDto } from '../../common/dto/list.dto';
 import { CurrentUser } from '../auth/decorator/current-user.decorator';
 import { User } from '../users/user.entity';
 import { getConnection } from 'typeorm';
+import { AuthenticatedGuard } from '../auth/guard/authenticated.guard';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 
 @Controller('api/advertisements')
 export class AdvertisementsController {
@@ -16,6 +18,8 @@ export class AdvertisementsController {
   ) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthenticatedGuard)
   async findAll(@Query() query: ListDto) {
     const order = {};
     order[query.sortBy] = query.sortDirection;
@@ -34,6 +38,8 @@ export class AdvertisementsController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthenticatedGuard)
   async findOne(@Param('id') id: string) {
     return await this.advertisementsRepository.findOneOrFail({
       where: {
@@ -44,6 +50,8 @@ export class AdvertisementsController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthenticatedGuard)
   async create(
     @Body() data: CreateAdvertisementDto,
     @CurrentUser() user: User
@@ -56,6 +64,8 @@ export class AdvertisementsController {
   }
 
   @Post(':id')
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthenticatedGuard)
   async update(
     @Param('id') id: string,
     @Body() data: UpdateAdvertisementDto,
@@ -64,7 +74,10 @@ export class AdvertisementsController {
     const advertisement = await this.advertisementsRepository.findOneOrFail({
       where: {
         id: id,
-        deletedAt: null
+        deletedAt: null,
+        creator: {
+          id: user.id,
+        }
       }
     });
     await getConnection().transaction(async (em) => {
@@ -74,11 +87,19 @@ export class AdvertisementsController {
   }
 
   @Post(':id/delete')
-  async remove(@Param('id') id: string) {
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthenticatedGuard)
+  async remove(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ) {
     const advertisement = await this.advertisementsRepository.findOneOrFail({
       where: {
         id: id,
-        deletedAt: null
+        deletedAt: null,
+        creator: {
+          id: user.id,
+        }
       }
     });
     await getConnection().transaction(async (em) => {

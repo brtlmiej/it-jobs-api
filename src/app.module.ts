@@ -7,7 +7,7 @@ import { databaseConfig } from './common/database/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { AdvertisementsModule } from './modules/advertisements/advertisements.module';
-import { AdvertisementsTypesModule } from './modules/advertisements-types/advertisements-types.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { AdvertisementsTypesModule } from './modules/advertisements-types/advert
     AuthModule,
     UsersModule,
     AdvertisementsModule,
-    AdvertisementsTypesModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

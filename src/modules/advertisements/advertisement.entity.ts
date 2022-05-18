@@ -1,12 +1,15 @@
 import { BaseEntity } from '../../common/database/base.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { User } from '../users/user.entity';
-import { AdvertisementType } from '../advertisements-types/advertisement-type.entity';
+import { Category } from '../categories/category.entity';
 
 @Entity()
 export class Advertisement extends BaseEntity {
   @Column()
   title: string;
+
+  @Column()
+  salary: number;
 
   @Column({ type: 'longtext' })
   description: string;
@@ -14,6 +17,6 @@ export class Advertisement extends BaseEntity {
   @ManyToOne(() => User, (obj) => obj.advertisements)
   creator: Promise<User>;
 
-  @ManyToOne(() => AdvertisementType)
-  type: Promise<AdvertisementType>;
+  @ManyToOne(() => Category)
+  category: Promise<Category>;
 }

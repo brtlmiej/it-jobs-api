@@ -5,11 +5,13 @@ import { AdvertisementsRepository } from './advertisements.repository';
 import { Advertisement } from './advertisement.entity';
 import { User } from '../users/user.entity';
 import { EntityManager } from 'typeorm';
+import { CategoriesRepository } from '../categories/categories.repository';
 
 @Injectable()
 export class AdvertisementsService {
   constructor(
     private readonly advertisementsRepository: AdvertisementsRepository,
+    private readonly categoriesRepository: CategoriesRepository,
   ) {
   }
 
@@ -28,9 +30,12 @@ export class AdvertisementsService {
     data: UpdateAdvertisementDto,
     user: User
   ) {
+    const category = await this.categoriesRepository
+      .findOneOrFail(data.categoryId);
     advertisement.title = data.title;
     advertisement.description = data.description;
     advertisement.creator = Promise.resolve(user);
+    advertisement.category = Promise.resolve(category);
     return await em.save(advertisement);
   }
 

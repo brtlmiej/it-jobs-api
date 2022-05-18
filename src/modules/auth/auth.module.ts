@@ -7,6 +7,7 @@ import { LocalStrategy } from './strategy/local.strategy';
 import { SessionSerializer } from './session.serializer';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './strategy/jwt.strategy';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { JwtModule } from '@nestjs/jwt';
       signOptions: { expiresIn: '3600000s' }
     }),
   ],
-  providers: [AuthService, LocalStrategy, SessionSerializer],
+  providers: [AuthService, LocalStrategy, SessionSerializer, JwtStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })
