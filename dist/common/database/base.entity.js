@@ -18,16 +18,19 @@ class BaseEntity extends typeorm_1.BaseEntity {
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, typeorm_1.PrimaryGeneratedColumn)(),
+    (0, class_transformer_1.Expose)({ groups: ['base'] }),
     __metadata("design:type", Number)
 ], BaseEntity.prototype, "id", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, typeorm_1.CreateDateColumn)(),
+    (0, class_transformer_1.Expose)({ groups: ['base'] }),
     __metadata("design:type", Date)
 ], BaseEntity.prototype, "createdAt", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, typeorm_1.UpdateDateColumn)(),
+    (0, class_transformer_1.Expose)({ groups: ['base'] }),
     __metadata("design:type", Date)
 ], BaseEntity.prototype, "updatedAt", void 0);
 __decorate([

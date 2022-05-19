@@ -5,19 +5,22 @@ import {
   BaseEntity as TypeOrmBaseEntity, Column,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 
 export class BaseEntity extends TypeOrmBaseEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn()
+  @Expose({ groups: ['base'] })
   id: number;
 
   @ApiProperty()
   @CreateDateColumn()
+  @Expose({ groups: ['base'] })
   createdAt: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
+  @Expose({ groups: ['base'] })
   updatedAt: Date;
 
   @Exclude()

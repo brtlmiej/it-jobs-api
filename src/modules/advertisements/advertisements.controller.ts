@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, SerializeOptions } from '@nestjs/common';
 import { AdvertisementsService } from './advertisements.service';
 import { CreateAdvertisementDto } from './dto/create-advertisement.dto';
 import { UpdateAdvertisementDto } from './dto/update-advertisement.dto';
@@ -19,7 +19,6 @@ export class AdvertisementsController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  @UseGuards(AuthenticatedGuard)
   async findAll(@Query() query: ListDto) {
     const order = {};
     order[query.sortBy] = query.sortDirection;
@@ -39,7 +38,6 @@ export class AdvertisementsController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  @UseGuards(AuthenticatedGuard)
   async findOne(@Param('id') id: string) {
     return await this.advertisementsRepository.findOneOrFail({
       where: {
@@ -51,7 +49,7 @@ export class AdvertisementsController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  @UseGuards(AuthenticatedGuard)
+  @SerializeOptions({ groups: ['base', 'creator'] })
   async create(
     @Body() data: CreateAdvertisementDto,
     @CurrentUser() user: User
@@ -65,7 +63,6 @@ export class AdvertisementsController {
 
   @Post(':id')
   @UseGuards(JwtAuthGuard)
-  @UseGuards(AuthenticatedGuard)
   async update(
     @Param('id') id: string,
     @Body() data: UpdateAdvertisementDto,
@@ -88,7 +85,6 @@ export class AdvertisementsController {
 
   @Post(':id/delete')
   @UseGuards(JwtAuthGuard)
-  @UseGuards(AuthenticatedGuard)
   async remove(
     @Param('id') id: string,
     @CurrentUser() user: User,

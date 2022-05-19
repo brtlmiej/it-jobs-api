@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAdvertisementDto } from './dto/create-advertisement.dto';
 import { UpdateAdvertisementDto } from './dto/update-advertisement.dto';
 import { AdvertisementsRepository } from './advertisements.repository';
@@ -31,11 +31,16 @@ export class AdvertisementsService {
     user: User
   ) {
     const category = await this.categoriesRepository
-      .findOneOrFail(data.categoryId);
+      .findOne(data.categoryId);
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
     advertisement.title = data.title;
     advertisement.description = data.description;
-    advertisement.creator = Promise.resolve(user);
-    advertisement.category = Promise.resolve(category);
+    advertisement.creator = user;
+    advertisement.category = category;
+    advertisement.salary = data.salary;
+    advertisement.benefits = data.benefits;
     return await em.save(advertisement);
   }
 

@@ -15,38 +15,48 @@ const user_type_enum_1 = require("./enum/user-type.enum");
 const base_entity_1 = require("../../common/database/base.entity");
 const swagger_1 = require("@nestjs/swagger");
 const class_transformer_1 = require("class-transformer");
+const advertisement_entity_1 = require("../advertisements/advertisement.entity");
 let User = class User extends base_entity_1.BaseEntity {
 };
 __decorate([
     (0, typeorm_1.Column)({ length: 255, unique: true }),
     (0, swagger_1.ApiProperty)(),
+    (0, class_transformer_1.Expose)({ groups: ['auth'] }),
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     (0, swagger_1.ApiProperty)(),
+    (0, class_transformer_1.Expose)({ groups: ['base'] }),
     __metadata("design:type", String)
 ], User.prototype, "firstName", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     (0, swagger_1.ApiProperty)(),
+    (0, class_transformer_1.Expose)({ groups: ['base'] }),
     __metadata("design:type", String)
 ], User.prototype, "lastName", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
-    (0, class_transformer_1.Exclude)(),
+    (0, class_transformer_1.Exclude)({ toPlainOnly: true }),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'int' }),
     (0, swagger_1.ApiProperty)(),
+    (0, class_transformer_1.Expose)({ groups: ['auth'] }),
     __metadata("design:type", Number)
 ], User.prototype, "status", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 100 }),
     (0, swagger_1.ApiProperty)(),
+    (0, class_transformer_1.Expose)({ groups: ['auth'] }),
     __metadata("design:type", String)
 ], User.prototype, "type", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => advertisement_entity_1.Advertisement, (obj) => obj.description),
+    __metadata("design:type", Array)
+], User.prototype, "advertisements", void 0);
 User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);

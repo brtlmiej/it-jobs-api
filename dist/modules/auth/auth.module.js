@@ -16,19 +16,24 @@ const local_strategy_1 = require("./strategy/local.strategy");
 const session_serializer_1 = require("./session.serializer");
 const auth_controller_1 = require("./auth.controller");
 const jwt_1 = require("@nestjs/jwt");
+const jwt_strategy_1 = require("./strategy/jwt.strategy");
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
             typeorm_1.TypeOrmModule.forFeature([users_repository_1.UsersRepository]),
-            passport_1.PassportModule.register({ session: true }),
+            passport_1.PassportModule.register({
+                defaultStrategy: 'jwt',
+                property: 'user',
+                session: false,
+            }),
             jwt_1.JwtModule.register({
                 secret: process.env.JWT_SECRET,
                 signOptions: { expiresIn: '3600000s' }
             }),
         ],
-        providers: [auth_service_1.AuthService, local_strategy_1.LocalStrategy, session_serializer_1.SessionSerializer],
+        providers: [auth_service_1.AuthService, local_strategy_1.LocalStrategy, session_serializer_1.SessionSerializer, jwt_strategy_1.JwtStrategy],
         controllers: [auth_controller_1.AuthController],
         exports: [auth_service_1.AuthService],
     })
