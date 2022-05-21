@@ -3,9 +3,10 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Post,
-  Req,
+  Req, SerializeOptions,
   UnauthorizedException,
-  UseGuards, UseInterceptors,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -18,28 +19,25 @@ import { AuthorizedDto } from './dto/authorized.dto';
 @Controller('api/auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
-  constructor(
-    protected readonly authService: AuthService
-  ) {}
+  constructor(protected readonly authService: AuthService) {}
 
   @Post('login')
   @ApiResponse({ type: AuthorizedDto })
+  @SerializeOptions({ groups: ['base', 'auth'] })
   async login(@Body() body: JwtLoginDto) {
-    const user = await this.authService.validateUser(
-      body.email,
-      body.password
-    );
+    const user = await this.authService.validateUser(body.email, body.password);
     if (!user) {
       throw new UnauthorizedException();
     }
     return {
-      ...await this.authService.loginJwt(user),
+      ...(await this.authService.loginJwt(user)),
       user: user,
     };
   }
 
   @Post('register/jobSeeker')
   @ApiResponse({ type: AuthorizedDto })
+  @SerializeOptions({ groups: ['base', 'auth'] })
   async registerJobSeeker(@Body() body: RegisterDto) {
     const user = await this.authService.register(
       body.email,
@@ -47,15 +45,16 @@ export class AuthController {
       body.firstName,
       body.lastName,
       UserTypeEnum.JOB_SEEKER,
-    )
+    );
     return {
-      ...await this.authService.loginJwt(user),
+      ...(await this.authService.loginJwt(user)),
       user: user,
-    }
+    };
   }
 
   @Post('register/advertiser')
   @ApiResponse({ type: AuthorizedDto })
+  @SerializeOptions({ groups: ['base', 'auth'] })
   async registerAdvertiser(@Body() body: RegisterDto) {
     const user = await this.authService.register(
       body.email,
@@ -63,10 +62,10 @@ export class AuthController {
       body.firstName,
       body.lastName,
       UserTypeEnum.ADVERTISER,
-    )
+    );
     return {
-      ...await this.authService.loginJwt(user),
+      ...(await this.authService.loginJwt(user)),
       user: user,
-    }
+    };
   }
 }

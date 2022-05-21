@@ -24,9 +24,15 @@ let AdvertisementsService = class AdvertisementsService {
         return await this.update(em, advertisement, data, user);
     }
     async update(em, advertisement, data, user) {
+        const category = await this.categoriesRepository
+            .findOne(data.categoryId);
+        if (!category) {
+            throw new common_1.NotFoundException('Category not found');
+        }
         advertisement.title = data.title;
         advertisement.description = data.description;
         advertisement.creator = user;
+        advertisement.category = category;
         advertisement.salary = data.salary;
         advertisement.benefits = data.benefits;
         return await em.save(advertisement);

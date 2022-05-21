@@ -4,17 +4,17 @@ import { ApiProperty } from '@nestjs/swagger';
 export class ListDto {
   @ApiProperty({ description: 'Number of records' })
   @IsInt()
-  records: number = 10;
+  records = 10;
 
   @ApiProperty({ description: 'Page number' })
   @IsInt()
-  page: number = 1;
+  page = 1;
 
   @ApiProperty({ description: 'Sort field' })
   @IsString()
-  sortBy: string;
+  sortBy: string = 'id';
 
   @ApiProperty({ description: 'Sort direction. Available values: ASC, DESC' })
   @IsIn(['ASC', 'DESC'])
-  sortDirection: 'ASC' | 'DESC';
+  sortDirection: 'ASC' | 'DESC' = 'DESC';
 }

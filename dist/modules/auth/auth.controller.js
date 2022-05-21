@@ -29,20 +29,21 @@ let AuthController = class AuthController {
         if (!user) {
             throw new common_1.UnauthorizedException();
         }
-        return Object.assign(Object.assign({}, await this.authService.loginJwt(user)), { user: user });
+        return Object.assign(Object.assign({}, (await this.authService.loginJwt(user))), { user: user });
     }
     async registerJobSeeker(body) {
         const user = await this.authService.register(body.email, body.password, body.firstName, body.lastName, user_type_enum_1.UserTypeEnum.JOB_SEEKER);
-        return Object.assign(Object.assign({}, await this.authService.loginJwt(user)), { user: user });
+        return Object.assign(Object.assign({}, (await this.authService.loginJwt(user))), { user: user });
     }
     async registerAdvertiser(body) {
         const user = await this.authService.register(body.email, body.password, body.firstName, body.lastName, user_type_enum_1.UserTypeEnum.ADVERTISER);
-        return Object.assign(Object.assign({}, await this.authService.loginJwt(user)), { user: user });
+        return Object.assign(Object.assign({}, (await this.authService.loginJwt(user))), { user: user });
     }
 };
 __decorate([
     (0, common_1.Post)('login'),
     (0, swagger_1.ApiResponse)({ type: authorized_dto_1.AuthorizedDto }),
+    (0, common_1.SerializeOptions)({ groups: ['base', 'auth'] }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [jwt_login_dto_1.JwtLoginDto]),
@@ -51,6 +52,7 @@ __decorate([
 __decorate([
     (0, common_1.Post)('register/jobSeeker'),
     (0, swagger_1.ApiResponse)({ type: authorized_dto_1.AuthorizedDto }),
+    (0, common_1.SerializeOptions)({ groups: ['base', 'auth'] }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [register_dto_1.RegisterDto]),
@@ -59,6 +61,7 @@ __decorate([
 __decorate([
     (0, common_1.Post)('register/advertiser'),
     (0, swagger_1.ApiResponse)({ type: authorized_dto_1.AuthorizedDto }),
+    (0, common_1.SerializeOptions)({ groups: ['base', 'auth'] }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [register_dto_1.RegisterDto]),

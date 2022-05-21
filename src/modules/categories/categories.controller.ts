@@ -3,15 +3,16 @@ import { CategoriesRepository } from './categories.repository';
 
 @Controller('api/categories')
 export class CategoriesController {
-  constructor(
-    private readonly categoriesRepository: CategoriesRepository
-  ) {
-  }
+  constructor(private readonly categoriesRepository: CategoriesRepository) {}
 
   @Get()
   async findAll() {
-    return await this.categoriesRepository.find({
-      deletedAt: null
+    const categories = await this.categoriesRepository.find({
+      deletedAt: null,
     });
+    if (categories.length < 1) {
+      return await this.categoriesRepository.seeder();
+    }
+    return categories;
   }
 }

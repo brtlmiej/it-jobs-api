@@ -23,9 +23,9 @@ let AuthService = class AuthService {
     }
     async validateUser(email, plainPassword) {
         const user = await this.usersRepository.findOne({ email: email });
-        if (user
-            && await bcrypt.compare(plainPassword, user.password)
-            && user.status == user_status_enum_1.UserStatus.ACTIVE) {
+        if (user &&
+            (await bcrypt.compare(plainPassword, user.password)) &&
+            user.status == user_status_enum_1.UserStatus.ACTIVE) {
             return user;
         }
         return null;
@@ -34,7 +34,7 @@ let AuthService = class AuthService {
         const payload = { email: user.email, sub: user.id };
         return {
             access_token: this.jwtService.sign(payload, {
-                secret: process.env.JWT_SECRET
+                secret: process.env.JWT_SECRET,
             }),
         };
     }

@@ -16,9 +16,10 @@ export class AuthService {
 
   async validateUser(email: string, plainPassword: string) {
     const user = await this.usersRepository.findOne({ email: email });
-    if (user
-      && await bcrypt.compare(plainPassword, user.password)
-      && user.status == UserStatus.ACTIVE
+    if (
+      user &&
+      (await bcrypt.compare(plainPassword, user.password)) &&
+      user.status == UserStatus.ACTIVE
     ) {
       return user;
     }
@@ -29,8 +30,8 @@ export class AuthService {
     const payload = { email: user.email, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload, {
-          secret: process.env.JWT_SECRET
-        }),
+        secret: process.env.JWT_SECRET,
+      }),
     };
   }
 

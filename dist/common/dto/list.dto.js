@@ -16,17 +16,19 @@ class ListDto {
     constructor() {
         this.records = 10;
         this.page = 1;
+        this.sortBy = 'id';
+        this.sortDirection = 'DESC';
     }
 }
 __decorate([
     (0, swagger_1.ApiProperty)({ description: 'Number of records' }),
     (0, class_validator_1.IsInt)(),
-    __metadata("design:type", Number)
+    __metadata("design:type", Object)
 ], ListDto.prototype, "records", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ description: 'Page number' }),
     (0, class_validator_1.IsInt)(),
-    __metadata("design:type", Number)
+    __metadata("design:type", Object)
 ], ListDto.prototype, "page", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ description: 'Sort field' }),

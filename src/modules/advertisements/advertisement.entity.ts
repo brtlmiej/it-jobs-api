@@ -2,7 +2,8 @@ import { BaseEntity } from '../../common/database/base.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Category } from '../categories/category.entity';
-import { Expose } from 'class-transformer';
+import { Exclude, Expose, Transform } from 'class-transformer';
+import { isString } from 'class-validator';
 
 @Entity()
 export class Advertisement extends BaseEntity {
@@ -18,6 +19,7 @@ export class Advertisement extends BaseEntity {
   description: string;
 
   @Column({ type: 'blob' })
+  @Exclude()
   benefits: string[] = [];
 
   @ManyToOne(() => User, (obj) => obj.advertisements)
