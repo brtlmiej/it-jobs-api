@@ -29,12 +29,20 @@ let AdvertisementsService = class AdvertisementsService {
         if (!category) {
             throw new common_1.NotFoundException('Category not found');
         }
+        if (data.salaryMax < data.salaryMin) {
+            throw new common_1.BadRequestException('Salary max cannot be less than salary min');
+        }
         advertisement.title = data.title;
         advertisement.description = data.description;
         advertisement.creator = user;
         advertisement.category = category;
-        advertisement.salary = data.salary;
+        advertisement.salaryMin = data.salaryMin;
+        advertisement.salaryMax = data.salaryMax;
+        advertisement.lat = data.lat;
+        advertisement.lng = data.lng;
+        advertisement.city = data.city;
         advertisement.benefits = data.benefits;
+        advertisement.skills = data.skills;
         return await em.save(advertisement);
     }
     async remove(em, advertisement) {

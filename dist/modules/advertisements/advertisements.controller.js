@@ -18,25 +18,32 @@ const advertisements_service_1 = require("./advertisements.service");
 const create_advertisement_dto_1 = require("./dto/create-advertisement.dto");
 const update_advertisement_dto_1 = require("./dto/update-advertisement.dto");
 const advertisements_repository_1 = require("./advertisements.repository");
-const list_dto_1 = require("../../common/dto/list.dto");
 const current_user_decorator_1 = require("../auth/decorator/current-user.decorator");
 const user_entity_1 = require("../users/user.entity");
 const typeorm_1 = require("typeorm");
 const jwt_auth_guard_1 = require("../auth/guard/jwt-auth.guard");
 const class_validator_1 = require("class-validator");
+const advertisements_list_dto_1 = require("./dto/advertisements-list.dto");
 let AdvertisementsController = class AdvertisementsController {
     constructor(advertisementsService, advertisementsRepository) {
         this.advertisementsService = advertisementsService;
         this.advertisementsRepository = advertisementsRepository;
     }
     async findAll(query) {
+        const where = {
+            'deletedAt': null
+        };
+        if (query.categoryId) {
+            where['category'] = +query.categoryId;
+        }
         const data = await this.advertisementsRepository.findAll(query.records, query.page, query.sortBy, query.sortDirection, {
-            where: {
-                deletedAt: null,
-            },
+            relations: ['category'],
+            join: { alias: 'advertisement', leftJoin: { users: 'advertisement.category' } },
+            where: where,
         });
         for (const a of data.data) {
             a.benefits = (0, class_validator_1.isString)(a.benefits) ? a.benefits.split(',') : a.benefits;
+            a.skills = (0, class_validator_1.isString)(a.skills) ? a.skills.split(',') : a.skills;
         }
         return data;
     }
@@ -51,6 +58,7 @@ let AdvertisementsController = class AdvertisementsController {
             throw new common_1.NotFoundException();
         }
         a.benefits = (0, class_validator_1.isString)(a.benefits) ? a.benefits.split(',') : a.benefits;
+        a.skills = (0, class_validator_1.isString)(a.skills) ? a.skills.split(',') : a.skills;
         return a;
     }
     async create(data, user) {
@@ -93,10 +101,10 @@ let AdvertisementsController = class AdvertisementsController {
 __decorate([
     (0, common_1.Get)(),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.SerializeOptions)({ groups: ['base', 'creator'] }),
+    (0, common_1.SerializeOptions)({ groups: ['base', 'creator', 'category'] }),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [list_dto_1.ListDto]),
+    __metadata("design:paramtypes", [advertisements_list_dto_1.AdvertisementsListDto]),
     __metadata("design:returntype", Promise)
 ], AdvertisementsController.prototype, "findAll", null);
 __decorate([

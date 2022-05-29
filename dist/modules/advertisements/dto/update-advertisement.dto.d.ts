@@ -3,8 +3,13 @@ declare const UpdateAdvertisementDto_base: import("@nestjs/common").Type<Partial
 export declare class UpdateAdvertisementDto extends UpdateAdvertisementDto_base {
     title: string;
     description: string;
-    salary: number;
+    salaryMin: number;
+    salaryMax: number;
+    lat: number;
+    lng: number;
+    city: string;
     benefits: string[];
+    skills: string[];
     categoryId: number;
 }
 export {};

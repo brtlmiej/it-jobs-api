@@ -8,7 +8,6 @@ class BaseRepository extends typeorm_1.Repository {
         options.skip = page - 1;
         options.order = {};
         options.order[orderBy !== null && orderBy !== void 0 ? orderBy : 'id'] = orderDirection !== null && orderDirection !== void 0 ? orderDirection : 'DESC';
-        console.log(options);
         const [result, total] = await this.findAndCount(options);
         return {
             data: result,

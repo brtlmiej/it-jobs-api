@@ -19,6 +19,7 @@ let Advertisement = class Advertisement extends base_entity_1.BaseEntity {
     constructor() {
         super(...arguments);
         this.benefits = [];
+        this.skills = [];
     }
 };
 __decorate([
@@ -27,9 +28,30 @@ __decorate([
     __metadata("design:type", String)
 ], Advertisement.prototype, "title", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ default: 0 }),
+    (0, class_transformer_1.Expose)({ groups: ['base'] }),
     __metadata("design:type", Number)
-], Advertisement.prototype, "salary", void 0);
+], Advertisement.prototype, "salaryMin", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 0 }),
+    (0, class_transformer_1.Expose)({ groups: ['base'] }),
+    __metadata("design:type", Number)
+], Advertisement.prototype, "salaryMax", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 0 }),
+    (0, class_transformer_1.Expose)({ groups: ['base'] }),
+    __metadata("design:type", Number)
+], Advertisement.prototype, "lat", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 0 }),
+    (0, class_transformer_1.Expose)({ groups: ['base'] }),
+    __metadata("design:type", Number)
+], Advertisement.prototype, "lng", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 'Warsaw' }),
+    (0, class_transformer_1.Expose)({ groups: ['base'] }),
+    __metadata("design:type", String)
+], Advertisement.prototype, "city", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 1200 }),
     (0, class_transformer_1.Expose)({ groups: ['base'] }),
@@ -37,9 +59,14 @@ __decorate([
 ], Advertisement.prototype, "description", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'blob' }),
-    (0, class_transformer_1.Exclude)(),
+    (0, class_transformer_1.Expose)({ groups: ['base'] }),
     __metadata("design:type", Array)
 ], Advertisement.prototype, "benefits", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'blob', nullable: true }),
+    (0, class_transformer_1.Expose)({ groups: ['base'] }),
+    __metadata("design:type", Array)
+], Advertisement.prototype, "skills", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (obj) => obj.advertisements),
     (0, class_transformer_1.Expose)({ groups: ['creator'] }),

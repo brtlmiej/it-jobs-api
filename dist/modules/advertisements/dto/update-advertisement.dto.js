@@ -30,7 +30,30 @@ __decorate([
     (0, class_validator_1.Min)(0),
     (0, class_validator_1.Max)(1000000),
     __metadata("design:type", Number)
-], UpdateAdvertisementDto.prototype, "salary", void 0);
+], UpdateAdvertisementDto.prototype, "salaryMin", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ minimum: 0, maximum: 1000000 }),
+    (0, class_validator_1.Min)(0),
+    (0, class_validator_1.Max)(1000000),
+    __metadata("design:type", Number)
+], UpdateAdvertisementDto.prototype, "salaryMax", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ minimum: -90, maximum: 90 }),
+    (0, class_validator_1.Min)(-90),
+    (0, class_validator_1.Max)(90),
+    __metadata("design:type", Number)
+], UpdateAdvertisementDto.prototype, "lat", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ minimum: -180, maximum: 180 }),
+    (0, class_validator_1.Min)(-180),
+    (0, class_validator_1.Max)(180),
+    __metadata("design:type", Number)
+], UpdateAdvertisementDto.prototype, "lng", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ minLength: 2, maxLength: 100 }),
+    (0, class_validator_1.Length)(2, 100),
+    __metadata("design:type", String)
+], UpdateAdvertisementDto.prototype, "city", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsArray)(),
@@ -38,6 +61,13 @@ __decorate([
     (0, class_validator_1.Length)(1, 50, { each: true }),
     __metadata("design:type", Array)
 ], UpdateAdvertisementDto.prototype, "benefits", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: Array }),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.Length)(1, 50, { each: true }),
+    __metadata("design:type", Array)
+], UpdateAdvertisementDto.prototype, "skills", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsInt)(),

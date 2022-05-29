@@ -18,6 +18,7 @@ import { User } from '../users/user.entity';
 import { getConnection } from 'typeorm';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { isString } from 'class-validator';
+import { AdvertisementsListDto } from './dto/advertisements-list.dto';
 
 @Controller('api/advertisements')
 export class AdvertisementsController {
@@ -28,21 +29,28 @@ export class AdvertisementsController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  @SerializeOptions({ groups: ['base', 'creator'] })
-  async findAll(@Query() query: ListDto) {
+  @SerializeOptions({ groups: ['base', 'creator', 'category'] })
+  async findAll(@Query() query: AdvertisementsListDto) {
+    const where = {
+      'deletedAt': null
+    };
+    if (query.categoryId) {
+      where['category'] = + query.categoryId;
+    }
     const data = await this.advertisementsRepository.findAll(
       query.records,
       query.page,
       query.sortBy,
       query.sortDirection,
       {
-        where: {
-          deletedAt: null,
-        },
+        relations: ['category'],
+        join: { alias: 'advertisement', leftJoin: { users: 'advertisement.category' } },
+        where: where,
       },
     );
     for (const a of data.data) {
       a.benefits = isString(a.benefits) ? a.benefits.split(',') : a.benefits;
+      a.skills = isString(a.skills) ? a.skills.split(',') : a.skills;
     }
     return data;
   }
@@ -60,6 +68,7 @@ export class AdvertisementsController {
       throw new NotFoundException();
     }
     a.benefits = isString(a.benefits) ? a.benefits.split(',') : a.benefits;
+    a.skills = isString(a.skills) ? a.skills.split(',') : a.skills;
     return a;
   }
 
