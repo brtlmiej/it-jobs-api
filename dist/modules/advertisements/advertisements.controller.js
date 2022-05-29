@@ -23,27 +23,35 @@ const current_user_decorator_1 = require("../auth/decorator/current-user.decorat
 const user_entity_1 = require("../users/user.entity");
 const typeorm_1 = require("typeorm");
 const jwt_auth_guard_1 = require("../auth/guard/jwt-auth.guard");
+const class_validator_1 = require("class-validator");
 let AdvertisementsController = class AdvertisementsController {
     constructor(advertisementsService, advertisementsRepository) {
         this.advertisementsService = advertisementsService;
         this.advertisementsRepository = advertisementsRepository;
     }
     async findAll(query) {
-        const order = {};
-        order[query.sortBy] = query.sortDirection;
-        return await this.advertisementsRepository.findAll(query.records, query.page, query.sortBy, query.sortDirection, {
+        const data = await this.advertisementsRepository.findAll(query.records, query.page, query.sortBy, query.sortDirection, {
             where: {
-                deletedAt: null
-            }
+                deletedAt: null,
+            },
         });
+        for (const a of data.data) {
+            a.benefits = (0, class_validator_1.isString)(a.benefits) ? a.benefits.split(',') : a.benefits;
+        }
+        return data;
     }
     async findOne(id) {
-        return await this.advertisementsRepository.findOneOrFail({
+        const a = await this.advertisementsRepository.findOne({
             where: {
                 id: id,
-                deletedAt: null
-            }
+                deletedAt: null,
+            },
         });
+        if (!a) {
+            throw new common_1.NotFoundException();
+        }
+        a.benefits = (0, class_validator_1.isString)(a.benefits) ? a.benefits.split(',') : a.benefits;
+        return a;
     }
     async create(data, user) {
         let advertisement;
@@ -59,8 +67,8 @@ let AdvertisementsController = class AdvertisementsController {
                 deletedAt: null,
                 creator: {
                     id: user.id,
-                }
-            }
+                },
+            },
         });
         await (0, typeorm_1.getConnection)().transaction(async (em) => {
             await this.advertisementsService.update(em, advertisement, data, user);
@@ -74,8 +82,8 @@ let AdvertisementsController = class AdvertisementsController {
                 deletedAt: null,
                 creator: {
                     id: user.id,
-                }
-            }
+                },
+            },
         });
         await (0, typeorm_1.getConnection)().transaction(async (em) => {
             await this.advertisementsService.remove(em, advertisement);
@@ -85,6 +93,7 @@ let AdvertisementsController = class AdvertisementsController {
 __decorate([
     (0, common_1.Get)(),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.SerializeOptions)({ groups: ['base', 'creator'] }),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [list_dto_1.ListDto]),

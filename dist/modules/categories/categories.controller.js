@@ -17,9 +17,13 @@ let CategoriesController = class CategoriesController {
         this.categoriesRepository = categoriesRepository;
     }
     async findAll() {
-        return await this.categoriesRepository.find({
-            deletedAt: null
+        const categories = await this.categoriesRepository.find({
+            deletedAt: null,
         });
+        if (categories.length < 1) {
+            return await this.categoriesRepository.seeder();
+        }
+        return categories;
     }
 };
 __decorate([

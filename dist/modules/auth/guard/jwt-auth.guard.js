@@ -20,6 +20,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.JwtAuthGuard = void 0;
 const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
+const class_validator_1 = require("class-validator");
 let JwtAuthGuard = class JwtAuthGuard extends (0, passport_1.AuthGuard)('jwt') {
     handleRequest(err, user) {
         const { password } = user, data = __rest(user, ["password"]);
@@ -28,7 +29,7 @@ let JwtAuthGuard = class JwtAuthGuard extends (0, passport_1.AuthGuard)('jwt') {
     async canActivate(context) {
         await super.canActivate(context);
         const { user } = context.switchToHttp().getRequest();
-        return !!user;
+        return !!user && (0, class_validator_1.isObject)(user) && Object.keys(user).length > 0;
     }
 };
 JwtAuthGuard = __decorate([

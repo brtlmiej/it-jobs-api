@@ -37,6 +37,7 @@ __decorate([
 ], Advertisement.prototype, "description", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'blob' }),
+    (0, class_transformer_1.Exclude)(),
     __metadata("design:type", Array)
 ], Advertisement.prototype, "benefits", void 0);
 __decorate([
