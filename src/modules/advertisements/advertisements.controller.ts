@@ -19,6 +19,9 @@ import { getConnection } from 'typeorm';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { isString } from 'class-validator';
 import { AdvertisementsListDto } from './dto/advertisements-list.dto';
+import { ApiResponse } from '@nestjs/swagger';
+import { Paginator } from '../../common/database/paginator';
+import { Advertisement } from './advertisement.entity';
 
 @Controller('api/advertisements')
 export class AdvertisementsController {
@@ -30,7 +33,11 @@ export class AdvertisementsController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @SerializeOptions({ groups: ['base', 'creator', 'category'] })
-  async findAll(@Query() query: AdvertisementsListDto) {
+  @ApiResponse({ type: Paginator })
+  async findAll(
+    @Query() query: AdvertisementsListDto,
+    @CurrentUser() user: User,
+  ) {
     const where = {
       'deletedAt': null
     };
@@ -48,16 +55,21 @@ export class AdvertisementsController {
         where: where,
       },
     );
+    const favourites = await this.advertisementsRepository
+      .findUserFavourites(user);
     for (const a of data.data) {
-      a.benefits = isString(a.benefits) ? a.benefits.split(',') : a.benefits;
-      a.skills = isString(a.skills) ? a.skills.split(',') : a.skills;
+      await this.advertisementsService.prepareObject(a, favourites);
     }
     return data;
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  async findOne(@Param('id') id: string) {
+  @ApiResponse({ type: Advertisement })
+  async findOne(
+    @Param('id') id: string,
+    @CurrentUser() user: User
+  ) {
     const a = await this.advertisementsRepository.findOne({
       where: {
         id: id,
@@ -67,9 +79,52 @@ export class AdvertisementsController {
     if (!a) {
       throw new NotFoundException();
     }
-    a.benefits = isString(a.benefits) ? a.benefits.split(',') : a.benefits;
-    a.skills = isString(a.skills) ? a.skills.split(',') : a.skills;
+    const favourites = await this.advertisementsRepository
+      .findUserFavourites(user);
+    await this.advertisementsService.prepareObject(a, favourites);
     return a;
+  }
+
+  @Post(':id/add-to-favourites')
+  @UseGuards(JwtAuthGuard)
+  async addToFavourites(
+    @Param('id') id: string,
+    @CurrentUser() user: User
+  ) {
+    const a = await this.advertisementsRepository.findOne({
+      where: {
+        id: id,
+        deletedAt: null,
+      },
+    });
+    if (!a) {
+      throw new NotFoundException();
+    }
+    await getConnection().transaction(async (em) => {
+      await this.advertisementsService.addToFavourites(em, user, a);
+    });
+    return;
+  }
+
+  @Post(':id/remove-from-favourites')
+  @UseGuards(JwtAuthGuard)
+  async removeFromFavourites(
+    @Param('id') id: string,
+    @CurrentUser() user: User
+  ) {
+    const a = await this.advertisementsRepository.findOne({
+      where: {
+        id: id,
+        deletedAt: null,
+      },
+    });
+    if (!a) {
+      throw new NotFoundException();
+    }
+    await getConnection().transaction(async (em) => {
+      await this.advertisementsService.removeFromFavourites(em, user, a);
+    });
+    return;
   }
 
   @Post()

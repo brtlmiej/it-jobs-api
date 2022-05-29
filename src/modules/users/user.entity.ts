@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
 import { UserTypeEnum } from './enum/user-type.enum';
 import { BaseEntity } from '../../common/database/base.entity';
 import { ApiProperty } from '@nestjs/swagger';
@@ -36,6 +36,9 @@ export class User extends BaseEntity {
   @Expose({ groups: ['auth'] })
   type: UserTypeEnum;
 
-  @OneToMany(() => Advertisement, (obj) => obj.description)
+  @OneToMany(() => Advertisement, (obj) => obj.creator)
   advertisements: Advertisement[];
+
+  @ManyToMany(() => Advertisement, (obj) => obj.observers)
+  favouriteAdvertisements: Advertisement[];
 }

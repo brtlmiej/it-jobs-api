@@ -1,46 +1,57 @@
 import { BaseEntity } from '../../common/database/base.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { AfterInsert, AfterLoad, Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Category } from '../categories/category.entity';
 import { Exclude, Expose, Transform } from 'class-transformer';
 import { isString } from 'class-validator';
+import { CurrentUser } from '../auth/decorator/current-user.decorator';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Advertisement extends BaseEntity {
   @Column()
   @Expose({ groups: ['base'] })
+  @ApiProperty()
   title: string;
 
   @Column({ default: 0 })
   @Expose({ groups: ['base'] })
+  @ApiProperty()
   salaryMin: number;
 
   @Column({ default: 0 })
   @Expose({ groups: ['base'] })
+  @ApiProperty()
   salaryMax: number;
 
   @Column({ default: 0 })
   @Expose({ groups: ['base'] })
+  @ApiProperty()
   lat: number;
 
   @Column({ default: 0 })
   @Expose({ groups: ['base'] })
+  @ApiProperty()
   lng: number;
 
   @Column({ default: 'Warsaw' })
   @Expose({ groups: ['base'] })
+  @ApiProperty()
   city: string;
 
   @Column({ type: 'varchar', length: 1200 })
   @Expose({ groups: ['base'] })
+  @ApiProperty()
   description: string;
 
   @Column({ type: 'blob' })
   @Expose({ groups: ['base'] })
+  @ApiProperty()
   benefits: string[] = [];
 
   @Column({ type: 'blob', nullable: true })
   @Expose({ groups: ['base'] })
+  @ApiProperty()
   skills: string[] = [];
 
   @ManyToOne(() => User, (obj) => obj.advertisements)
@@ -50,4 +61,13 @@ export class Advertisement extends BaseEntity {
   @ManyToOne(() => Category)
   @Expose({ groups: ['category'] })
   category: Category;
+
+  @ManyToMany(() => User, (obj) => obj.favouriteAdvertisements)
+  @JoinTable()
+  @Expose({ groups: ['observers'] })
+  observers: User[]
+
+  @Expose({ groups: ['base'] })
+  @ApiProperty()
+  isFavourite: boolean = false;
 }

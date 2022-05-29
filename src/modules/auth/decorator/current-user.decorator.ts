@@ -1,8 +1,10 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { User } from '../../users/user.entity';
 
 export const CurrentUser = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext) => {
+  async (data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
-    return request.user;
+    const id = request.user?.id;
+    return await User.findOne(id);
   },
 );

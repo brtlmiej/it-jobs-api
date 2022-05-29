@@ -4,8 +4,10 @@ import { UpdateAdvertisementDto } from './dto/update-advertisement.dto';
 import { AdvertisementsRepository } from './advertisements.repository';
 import { Advertisement } from './advertisement.entity';
 import { User } from '../users/user.entity';
-import { EntityManager } from 'typeorm';
+import { AfterLoad, EntityManager } from 'typeorm';
 import { CategoriesRepository } from '../categories/categories.repository';
+import { isString } from 'class-validator';
+import { CurrentUser } from '../auth/decorator/current-user.decorator';
 
 @Injectable()
 export class AdvertisementsService {
@@ -58,5 +60,37 @@ export class AdvertisementsService {
   ) {
     advertisement.deletedAt = new Date();
     await em.save(advertisement);
+  }
+
+  async addToFavourites(
+    em: EntityManager,
+    user: User,
+    advertisement: Advertisement
+  ) {
+    const favourites = user.favouriteAdvertisements ?? [];
+    user.favouriteAdvertisements = [...favourites, advertisement];
+    await em.save(user as User);
+  }
+
+  async removeFromFavourites(
+    em: EntityManager,
+    user: User,
+    advertisement: Advertisement
+  ) {
+    const favourites = user.favouriteAdvertisements ?? [];
+    user.favouriteAdvertisements = favourites.filter((a) => a.id != advertisement.id);
+    await em.save(user);
+  }
+
+  async prepareObject(advertisement: Advertisement, favourites: Advertisement[]) {
+    advertisement.benefits =
+      isString(advertisement.benefits)
+        ? advertisement.benefits.split(',')
+        : advertisement.benefits;
+    advertisement.skills =
+      isString(advertisement.skills)
+        ? advertisement.skills.split(',')
+        : advertisement.skills;
+      advertisement.isFavourite = !!favourites.find((a) => a.id == advertisement.id);
   }
 }
