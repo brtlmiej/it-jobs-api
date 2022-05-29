@@ -11,7 +11,24 @@ export class Advertisement extends BaseEntity {
   title: string;
 
   @Column()
-  salary: number;
+  @Expose({ groups: ['base'] })
+  salaryMin: number;
+
+  @Column()
+  @Expose({ groups: ['base'] })
+  salaryMax: number;
+
+  @Column()
+  @Expose({ groups: ['base'] })
+  lat: number;
+
+  @Column()
+  @Expose({ groups: ['base'] })
+  lng: number;
+
+  @Column()
+  @Expose({ groups: ['base'] })
+  city: string;
 
   @Column({ type: 'varchar', length: 1200 })
   @Expose({ groups: ['base'] })
@@ -19,6 +36,9 @@ export class Advertisement extends BaseEntity {
 
   @Column({ type: 'blob' })
   benefits: string[] = [];
+
+  @Column({ type: 'blob' })
+  skills: string[] = [];
 
   @ManyToOne(() => User, (obj) => obj.advertisements)
   @Expose({ groups: ['creator'] })

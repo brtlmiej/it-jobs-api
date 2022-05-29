@@ -13,13 +13,38 @@ export class CreateAdvertisementDto {
   @ApiProperty({ minimum: 0, maximum: 1000000 })
   @Min(0)
   @Max(1000000)
-  salary: number;
+  salaryMin: number;
+
+  @ApiProperty({ minimum: 0, maximum: 1000000 })
+  @Min(0)
+  @Max(1000000)
+  salaryMax: number;
+
+  @ApiProperty({ minimum: -90, maximum: 90 })
+  @Min(-90)
+  @Max(90)
+  lat: number;
+
+  @ApiProperty({ minimum: -180, maximum: 180 })
+  @Min(-180)
+  @Max(180)
+  lng: number;
+
+  @ApiProperty({ minLength: 2, maxLength: 100 })
+  @Length(2, 100)
+  city: string;
 
   @ApiProperty({ type: Array })
   @IsArray()
   @IsString({ each: true })
   @Length(1, 50, { each: true })
   benefits: string[];
+
+  @ApiProperty({ type: Array })
+  @IsArray()
+  @IsString({ each: true })
+  @Length(1, 50, { each: true })
+  skills: string[];
 
   @ApiProperty()
   @IsInt()
