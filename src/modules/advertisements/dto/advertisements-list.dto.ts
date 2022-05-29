@@ -6,4 +6,8 @@ export class AdvertisementsListDto extends ListDto {
   @ApiProperty({ description: 'Category Id' })
   @IsOptional()
   categoryId: number;
+
+  @ApiProperty({ description: 'Get only favourite advertisements' })
+  @IsOptional()
+  isFavourite: boolean;
 }

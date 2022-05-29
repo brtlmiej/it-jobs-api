@@ -15,7 +15,7 @@ import { AdvertisementsRepository } from './advertisements.repository';
 import { ListDto } from '../../common/dto/list.dto';
 import { CurrentUser } from '../auth/decorator/current-user.decorator';
 import { User } from '../users/user.entity';
-import { getConnection } from 'typeorm';
+import { getConnection, In } from 'typeorm';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { isString } from 'class-validator';
 import { AdvertisementsListDto } from './dto/advertisements-list.dto';
@@ -38,11 +38,16 @@ export class AdvertisementsController {
     @Query() query: AdvertisementsListDto,
     @CurrentUser() user: User,
   ) {
+    const favourites = await this.advertisementsRepository
+      .findUserFavourites(user);
     const where = {
       'deletedAt': null
     };
     if (query.categoryId) {
       where['category'] = + query.categoryId;
+    }
+    if (query.isFavourite) {
+      where['id'] = In(favourites.map(a => a.id));
     }
     const data = await this.advertisementsRepository.findAll(
       query.records,
@@ -51,12 +56,15 @@ export class AdvertisementsController {
       query.sortDirection,
       {
         relations: ['category'],
-        join: { alias: 'advertisement', leftJoin: { users: 'advertisement.category' } },
+        join: {
+          alias: 'advertisement',
+          leftJoin: {
+            category: 'advertisement.category',
+          }
+        },
         where: where,
       },
     );
-    const favourites = await this.advertisementsRepository
-      .findUserFavourites(user);
     for (const a of data.data) {
       await this.advertisementsService.prepareObject(a, favourites);
     }
