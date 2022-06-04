@@ -10,6 +10,7 @@ import { AdvertisementsModule } from './modules/advertisements/advertisements.mo
 import { CategoriesModule } from './modules/categories/categories.module';
 import { SkillsModule } from './modules/skills/skills.module';
 import { BenefitsModule } from './modules/benefits/benefits.module';
+import { ApplicationsModule } from './modules/applications/applications.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { BenefitsModule } from './modules/benefits/benefits.module';
     CategoriesModule,
     SkillsModule,
     BenefitsModule,
+    ApplicationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
