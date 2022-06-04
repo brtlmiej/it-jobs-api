@@ -8,12 +8,16 @@ import { AfterLoad, EntityManager } from 'typeorm';
 import { CategoriesRepository } from '../categories/categories.repository';
 import { isString } from 'class-validator';
 import { CurrentUser } from '../auth/decorator/current-user.decorator';
+import { SkillsRepository } from '../skills/skills.repository';
+import { BenefitsRepository } from '../benefits/benefits.repository';
 
 @Injectable()
 export class AdvertisementsService {
   constructor(
     private readonly advertisementsRepository: AdvertisementsRepository,
     private readonly categoriesRepository: CategoriesRepository,
+    private readonly skillsRepository: SkillsRepository,
+    private readonly benefitsRepository: BenefitsRepository,
   ) {
   }
 
@@ -34,13 +38,44 @@ export class AdvertisementsService {
   ) {
     const category = await this.categoriesRepository
       .findOne(data.categoryId);
+    const benefits = [];
+    const skills = [];
     if (!category) {
       throw new NotFoundException('Category not found');
     }
+    for (const skillId of data.skillsIds) {
+      const obj =
+        await this.skillsRepository.findOne(skillId, {
+          where: { deletedAt: null }
+        });
+      if (!obj) {
+        continue;
+      }
+      skills.push(obj);
+    }
+    if (skills.length < 1) {
+      throw new BadRequestException('Advertisement should have min 1 skill')
+    }
+
+    for (const benefitId of data.benefitsIds) {
+      const obj =
+        await this.benefitsRepository.findOne(benefitId, {
+          where: { deletedAt: null }
+        });
+      if (!obj) {
+        continue;
+      }
+      benefits.push(obj);
+    }
+    if (benefits.length < 1) {
+      throw new BadRequestException('Advertisement should have min 1 benefit')
+    }
+
     if (data.salaryMax < data.salaryMin) {
       throw new BadRequestException('Salary max cannot be less than salary min')
     }
     advertisement.title = data.title;
+    advertisement.city = data.city;
     advertisement.description = data.description;
     advertisement.creator = user;
     advertisement.category = category;
@@ -49,8 +84,8 @@ export class AdvertisementsService {
     advertisement.lat = data.lat;
     advertisement.lng = data.lng;
     advertisement.city = data.city;
-    advertisement.benefits = data.benefits;
-    advertisement.skills = data.skills;
+    advertisement.benefits = benefits;
+    advertisement.skills = skills;
     return await em.save(advertisement);
   }
 
@@ -83,14 +118,6 @@ export class AdvertisementsService {
   }
 
   async prepareObject(advertisement: Advertisement, favourites: Advertisement[]) {
-    advertisement.benefits =
-      isString(advertisement.benefits)
-        ? advertisement.benefits.split(',')
-        : advertisement.benefits;
-    advertisement.skills =
-      isString(advertisement.skills)
-        ? advertisement.skills.split(',')
-        : advertisement.skills;
       advertisement.isFavourite = !!favourites.find((a) => a.id == advertisement.id);
   }
 }

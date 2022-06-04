@@ -1,4 +1,4 @@
-import { IsArray, IsInt, IsNotEmpty, IsString, Length, Max, Min, MinLength } from 'class-validator';
+import { IsArray, IsInt, IsNotEmpty, IsNumber, IsString, Length, Max, Min, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAdvertisementDto {
@@ -34,17 +34,13 @@ export class CreateAdvertisementDto {
   @Length(2, 100)
   city: string;
 
-  @ApiProperty({ type: Array })
+  @ApiProperty({ type: Number, isArray: true })
   @IsArray()
-  @IsString({ each: true })
-  @Length(1, 50, { each: true })
-  benefits: string[];
+  benefitsIds: number[];
 
-  @ApiProperty({ type: Array })
+  @ApiProperty({ type: Number, isArray: true })
   @IsArray()
-  @IsString({ each: true })
-  @Length(1, 50, { each: true })
-  skills: string[];
+  skillsIds: number[];
 
   @ApiProperty()
   @IsInt()

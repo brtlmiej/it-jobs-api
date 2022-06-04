@@ -35,17 +35,13 @@ export class UpdateAdvertisementDto extends PartialType(CreateAdvertisementDto) 
   @Length(2, 100)
   city: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: Array })
   @IsArray()
-  @IsString({ each: true })
-  @Length(1, 50, { each: true })
-  benefits: string[];
+  benefitsIds: number[];
 
   @ApiProperty({ type: Array })
   @IsArray()
-  @IsString({ each: true })
-  @Length(1, 50, { each: true })
-  skills: string[];
+  skillsIds: number[];
 
   @ApiProperty()
   @IsInt()

@@ -8,6 +8,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { AdvertisementsModule } from './modules/advertisements/advertisements.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { SkillsModule } from './modules/skills/skills.module';
+import { BenefitsModule } from './modules/benefits/benefits.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { CategoriesModule } from './modules/categories/categories.module';
     UsersModule,
     AdvertisementsModule,
     CategoriesModule,
+    SkillsModule,
+    BenefitsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

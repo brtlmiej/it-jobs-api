@@ -6,6 +6,8 @@ import { Exclude, Expose, Transform } from 'class-transformer';
 import { isString } from 'class-validator';
 import { CurrentUser } from '../auth/decorator/current-user.decorator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Skill } from '../skills/skill.entity';
+import { Benefit } from '../benefits/benefit.entity';
 
 @Entity()
 export class Advertisement extends BaseEntity {
@@ -13,6 +15,11 @@ export class Advertisement extends BaseEntity {
   @Expose({ groups: ['base'] })
   @ApiProperty()
   title: string;
+
+  @Column({ nullable: true })
+  @Expose({ groups: ['base'] })
+  @ApiProperty()
+  company: string;
 
   @Column({ default: 0 })
   @Expose({ groups: ['base'] })
@@ -44,15 +51,17 @@ export class Advertisement extends BaseEntity {
   @ApiProperty()
   description: string;
 
-  @Column({ type: 'blob' })
+  @ManyToMany(() => Benefit)
+  @JoinTable()
   @Expose({ groups: ['base'] })
   @ApiProperty()
-  benefits: string[] = [];
+  benefits: Benefit[];
 
-  @Column({ type: 'blob', nullable: true })
+  @ManyToMany(() => Skill)
+  @JoinTable()
   @Expose({ groups: ['base'] })
   @ApiProperty()
-  skills: string[] = [];
+  skills: Skill[];
 
   @ManyToOne(() => User, (obj) => obj.advertisements)
   @Expose({ groups: ['creator'] })
