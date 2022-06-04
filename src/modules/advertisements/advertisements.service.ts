@@ -76,6 +76,7 @@ export class AdvertisementsService {
     }
     advertisement.title = data.title;
     advertisement.city = data.city;
+    advertisement.company = data.company;
     advertisement.description = data.description;
     advertisement.creator = user;
     advertisement.category = category;

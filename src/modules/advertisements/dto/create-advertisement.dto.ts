@@ -10,6 +10,10 @@ export class CreateAdvertisementDto {
   @Length(20, 1000)
   description: string;
 
+  @ApiProperty({ minLength: 5, maxLength: 50 })
+  @Length(5, 50)
+  company: string;
+
   @ApiProperty({ minimum: 0, maximum: 1000000 })
   @Min(0)
   @Max(1000000)

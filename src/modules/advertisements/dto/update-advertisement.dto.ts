@@ -7,6 +7,10 @@ export class UpdateAdvertisementDto extends PartialType(CreateAdvertisementDto) 
   @Length(5, 100)
   title: string;
 
+  @ApiProperty({ minLength: 5, maxLength: 50 })
+  @Length(5, 50)
+  company: string;
+
   @ApiProperty({ minLength: 20, maxLength: 1000 })
   @Length(20, 1000)
   description: string;
