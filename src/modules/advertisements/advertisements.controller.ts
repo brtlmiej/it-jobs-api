@@ -55,7 +55,7 @@ export class AdvertisementsController {
       query.sortBy,
       query.sortDirection,
       {
-        relations: ['category'],
+        relations: ['category', 'skills', 'benefits'],
         join: {
           alias: 'advertisement',
           leftJoin: {
@@ -83,6 +83,7 @@ export class AdvertisementsController {
         id: id,
         deletedAt: null,
       },
+      relations: ['category', 'skills', 'benefits'],
     });
     if (!a) {
       throw new NotFoundException();
