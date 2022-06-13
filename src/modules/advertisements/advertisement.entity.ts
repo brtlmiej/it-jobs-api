@@ -1,5 +1,5 @@
 import { BaseEntity } from '../../common/database/base.entity';
-import { AfterInsert, AfterLoad, Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import { AfterInsert, AfterLoad, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Category } from '../categories/category.entity';
 import { Exclude, Expose, Transform } from 'class-transformer';
@@ -8,6 +8,7 @@ import { CurrentUser } from '../auth/decorator/current-user.decorator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Skill } from '../skills/skill.entity';
 import { Benefit } from '../benefits/benefit.entity';
+import { Application } from '../applications/application.entity';
 
 @Entity()
 export class Advertisement extends BaseEntity {
@@ -79,4 +80,12 @@ export class Advertisement extends BaseEntity {
   @Expose({ groups: ['base'] })
   @ApiProperty()
   isFavourite: boolean = false;
+
+  @Expose({ groups: ['base'] })
+  @ApiProperty()
+  @Column({ type: 'integer', default: 0 })
+  favouritesCount: number;
+
+  @OneToMany(() => Application, (obj) => obj.advertisement)
+  applications: Application[];
 }

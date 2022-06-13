@@ -1,9 +1,10 @@
-import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import { UserTypeEnum } from './enum/user-type.enum';
 import { BaseEntity } from '../../common/database/base.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 import { Advertisement } from '../advertisements/advertisement.entity';
+import { Application } from '../applications/application.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -41,4 +42,7 @@ export class User extends BaseEntity {
 
   @ManyToMany(() => Advertisement, (obj) => obj.observers)
   favouriteAdvertisements: Advertisement[];
+
+  @OneToMany(() => Application, (obj) => obj.jobSeeker)
+  applications: Application[];
 }

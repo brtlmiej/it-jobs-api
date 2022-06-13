@@ -8,6 +8,8 @@ import { UsersRepository } from '../users/users.repository';
 import { AuthModule } from '../auth/auth.module';
 import { SkillsRepository } from '../skills/skills.repository';
 import { BenefitsRepository } from '../benefits/benefits.repository';
+import { ApplicationsRepository } from '../applications/applications.repository';
+import { ApplicationsModule } from '../applications/applications.module';
 
 @Module({
   imports: [
@@ -15,9 +17,11 @@ import { BenefitsRepository } from '../benefits/benefits.repository';
       AdvertisementsRepository,
       CategoriesRepository,
       SkillsRepository,
-      BenefitsRepository
+      BenefitsRepository,
+      ApplicationsRepository,
     ]),
     AuthModule,
+    ApplicationsModule,
   ],
   controllers: [AdvertisementsController],
   providers: [AdvertisementsService]
