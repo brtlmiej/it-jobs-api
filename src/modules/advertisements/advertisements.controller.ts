@@ -1,33 +1,39 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Body,
+  NotFoundException,
   Param,
+  Post,
   Query,
+  SerializeOptions,
   UseGuards,
-  SerializeOptions, NotFoundException,
 } from '@nestjs/common';
 import { AdvertisementsService } from './advertisements.service';
 import { CreateAdvertisementDto } from './dto/create-advertisement.dto';
 import { UpdateAdvertisementDto } from './dto/update-advertisement.dto';
 import { AdvertisementsRepository } from './advertisements.repository';
-import { ListDto } from '../../common/dto/list.dto';
 import { CurrentUser } from '../auth/decorator/current-user.decorator';
 import { User } from '../users/user.entity';
 import { getConnection, In } from 'typeorm';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { isString } from 'class-validator';
 import { AdvertisementsListDto } from './dto/advertisements-list.dto';
 import { ApiResponse } from '@nestjs/swagger';
 import { Paginator } from '../../common/database/paginator';
 import { Advertisement } from './advertisement.entity';
+import { UserTypeEnum } from '../users/enum/user-type.enum';
+import { ApplyOnAdvertisementDto } from './dto/apply-on-advertisement.dto';
+import { ApplicationsService } from '../applications/applications.service';
+import { ApplicationsRepository } from '../applications/applications.repository';
+import { ListDto } from '../../common/dto/list.dto';
 
 @Controller('api/advertisements')
 export class AdvertisementsController {
   constructor(
     private readonly advertisementsService: AdvertisementsService,
     private readonly advertisementsRepository: AdvertisementsRepository,
+    private readonly applicationsService: ApplicationsService,
+    private readonly applicationsRepository: ApplicationsRepository,
   ) {}
 
   @Get()
@@ -140,7 +146,8 @@ export class AdvertisementsController {
   @SerializeOptions({ groups: ['base', 'creator'] })
   async create(
     @Body() data: CreateAdvertisementDto,
-    @CurrentUser() user: User,
+    @CurrentUser({ allowedTypes: [UserTypeEnum.ADVERTISER] })
+    user: User,
   ) {
     let advertisement;
     await getConnection().transaction(async (em) => {
@@ -154,7 +161,8 @@ export class AdvertisementsController {
   async update(
     @Param('id') id: string,
     @Body() data: UpdateAdvertisementDto,
-    @CurrentUser() user: User,
+    @CurrentUser({ allowedTypes: [UserTypeEnum.ADVERTISER] })
+    user: User,
   ) {
     const advertisement = await this.advertisementsRepository.findOneOrFail({
       where: {
@@ -171,9 +179,34 @@ export class AdvertisementsController {
     return advertisement;
   }
 
+  @Post(':id/apply')
+  @UseGuards(JwtAuthGuard)
+  async apply(
+    @Param('id') id: string,
+    @Body() data: ApplyOnAdvertisementDto,
+    @CurrentUser({ allowedTypes: [UserTypeEnum.JOB_SEEKER] })
+      user: User,
+  ) {
+    const advertisement = await this.advertisementsRepository.findOneOrFail({
+      where: {
+        id: id,
+        deletedAt: null,
+      },
+    });
+    let application;
+    await getConnection().transaction(async (em) => {
+      application = await this.applicationsService.create(em, advertisement, user, data);
+    });
+    return application;
+  }
+
   @Post(':id/delete')
   @UseGuards(JwtAuthGuard)
-  async remove(@Param('id') id: string, @CurrentUser() user: User) {
+  async remove(
+    @Param('id') id: string,
+    @CurrentUser({ allowedTypes: [UserTypeEnum.ADVERTISER] })
+    user: User,
+  ) {
     const advertisement = await this.advertisementsRepository.findOneOrFail({
       where: {
         id: id,

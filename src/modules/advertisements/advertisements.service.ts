@@ -105,6 +105,8 @@ export class AdvertisementsService {
   ) {
     const favourites = user.favouriteAdvertisements ?? [];
     user.favouriteAdvertisements = [...favourites, advertisement];
+    advertisement.favouritesCount++;
+    await em.save(advertisement);
     await em.save(user as User);
   }
 
