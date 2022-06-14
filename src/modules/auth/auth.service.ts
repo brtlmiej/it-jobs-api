@@ -44,7 +44,6 @@ export class AuthService {
   ) {
     let user = await this.usersRepository.findOne({
       email: email,
-      type: type,
     });
     if (user) {
       throw new BadRequestException('User with given e-mail already exist');
