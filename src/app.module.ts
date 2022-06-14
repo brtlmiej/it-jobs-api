@@ -11,6 +11,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { SkillsModule } from './modules/skills/skills.module';
 import { BenefitsModule } from './modules/benefits/benefits.module';
 import { ApplicationsModule } from './modules/applications/applications.module';
+import { CitiesModule } from './modules/cities/cities.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ApplicationsModule } from './modules/applications/applications.module';
     SkillsModule,
     BenefitsModule,
     ApplicationsModule,
+    CitiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
