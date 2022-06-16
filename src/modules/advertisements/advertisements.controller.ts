@@ -151,6 +151,7 @@ export class AdvertisementsController {
     @CurrentUser() user: User
   ) {
     const a = await this.advertisementsRepository.findOne({
+      relations: ['observers'],
       where: {
         id: id,
         deletedAt: null,
@@ -172,6 +173,7 @@ export class AdvertisementsController {
     @CurrentUser() user: User
   ) {
     const a = await this.advertisementsRepository.findOne({
+      relations: ['observers'],
       where: {
         id: id,
         deletedAt: null,
