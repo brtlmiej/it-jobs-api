@@ -13,7 +13,7 @@ export class CategoriesController {
     const categories = await this.categoriesRepository.find({
       deletedAt: null,
     });
-    if (categories.length < 1) {
+    if (categories.length < 6) {
       return await this.categoriesRepository.seeder();
     }
     return categories;
