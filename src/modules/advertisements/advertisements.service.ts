@@ -103,8 +103,8 @@ export class AdvertisementsService {
     user: User,
     advertisement: Advertisement
   ) {
-    const favourites = user.favouriteAdvertisements ?? [];
-    user.favouriteAdvertisements = [...favourites, advertisement];
+    const observers = advertisement.observers;
+    advertisement.observers = [...observers, user];
     advertisement.favouritesCount++;
     await em.save(advertisement);
     await em.save(user as User);
@@ -115,9 +115,10 @@ export class AdvertisementsService {
     user: User,
     advertisement: Advertisement
   ) {
-    const favourites = user.favouriteAdvertisements ?? [];
-    user.favouriteAdvertisements = favourites.filter((a) => a.id != advertisement.id);
-    await em.save(user);
+    const observers = advertisement.observers ?? [];
+    advertisement.observers = observers.filter((a) => a.id != user.id);
+    advertisement.favouritesCount--;
+    await em.save(advertisement);
   }
 
   async prepareObject(advertisement: Advertisement, favourites: Advertisement[]) {
