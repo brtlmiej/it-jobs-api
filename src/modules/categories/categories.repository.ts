@@ -15,6 +15,7 @@ export class CategoriesRepository extends BaseRepository<Category> {
       { name: 'Mobile' },
       { name: 'Admin' },
       { name: 'Project manager' },
+      { name: 'All' },
     ];
     const objects = [];
     await getConnection().transaction(async (em) => {
