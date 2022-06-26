@@ -24,6 +24,7 @@ import { ApplicationsModule } from '../applications/applications.module';
     ApplicationsModule,
   ],
   controllers: [AdvertisementsController],
-  providers: [AdvertisementsService]
+  providers: [AdvertisementsService],
+  exports: [AdvertisementsService],
 })
 export class AdvertisementsModule {}

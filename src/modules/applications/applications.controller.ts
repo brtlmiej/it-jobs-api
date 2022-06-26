@@ -7,11 +7,15 @@ import { User } from '../users/user.entity';
 import { ApplicationsRepository } from './applications.repository';
 import { ApplicationsListDto } from './dto/applications-list.dto';
 import { UserTypeEnum } from '../users/enum/user-type.enum';
+import { AdvertisementsService } from '../advertisements/advertisements.service';
+import { AdvertisementsRepository } from '../advertisements/advertisements.repository';
 
 @Controller('api/applications')
 export class ApplicationsController {
   constructor(
     private readonly applicationsRepository: ApplicationsRepository,
+    private readonly advertisementsService: AdvertisementsService,
+    private readonly advertisementsRepository: AdvertisementsRepository,
   ) {
   }
 
@@ -45,7 +49,7 @@ export class ApplicationsController {
         id: query.advertisementId
       };
     }
-    return await this.applicationsRepository.findAll(
+    const applications = await this.applicationsRepository.findAll(
       query.records,
       query.page,
       query.sortBy,
@@ -55,6 +59,12 @@ export class ApplicationsController {
         where: where,
       },
     );
+    const favourites = await this.advertisementsRepository
+      .findUserFavourites(user);
+    for (const application of applications.data) {
+      await this.advertisementsService.prepareObject(application.advertisement, favourites);
+    }
+    return applications;
   }
 
   @Get('/:id')
