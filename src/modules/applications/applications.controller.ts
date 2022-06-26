@@ -2,11 +2,11 @@ import { Controller, Get, Param, Query, SerializeOptions, UseGuards } from '@nes
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { ApiResponse } from '@nestjs/swagger';
 import { Paginator } from '../../common/database/paginator';
-import { ListDto } from '../../common/dto/list.dto';
 import { CurrentUser } from '../auth/decorator/current-user.decorator';
 import { User } from '../users/user.entity';
 import { ApplicationsRepository } from './applications.repository';
 import { ApplicationsListDto } from './dto/applications-list.dto';
+import { UserTypeEnum } from '../users/enum/user-type.enum';
 
 @Controller('api/applications')
 export class ApplicationsController {
@@ -23,11 +23,23 @@ export class ApplicationsController {
     @Query() query: ApplicationsListDto,
     @CurrentUser() user: User,
   ) {
-    const where = {
-      jobSeeker: {
-        id: user.id,
-      }
-    };
+    let where;
+    if (user.type == UserTypeEnum.JOB_SEEKER) {
+      where = {
+        jobSeeker: {
+          id: user.id,
+        }
+      };
+    } else if (user.type == UserTypeEnum.ADVERTISER) {
+      where = {
+        advertisement: {
+          creator: {
+            id:  user.id,
+          }
+        }
+      };
+    }
+
     if (!!query.advertisementId) {
       where['advertisement'] = {
         id: query.advertisementId
@@ -39,7 +51,7 @@ export class ApplicationsController {
       query.sortBy,
       query.sortDirection,
       {
-        relations: ['jobSeeker', 'advertisement'],
+        relations: ['jobSeeker', 'advertisement', 'advertisement.category', 'advertisement.skills', 'advertisement.benefits'],
         where: where,
       },
     );
